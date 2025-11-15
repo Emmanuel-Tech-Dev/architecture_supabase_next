@@ -5,7 +5,8 @@ import Model from "@/libs/config/model";
 import { utils } from "@/libs/utils";
 import Image from "next/image";
 import { Button } from "primereact/button";
-import { use, useEffect } from "react";
+import { Toast } from "primereact/toast";
+import { use, useEffect, useRef } from "react";
 
 export default function Home() {
   // async function getData() {
@@ -40,6 +41,8 @@ export default function Home() {
   //   };
   // }, []);
 
+  const toastRef = useRef(null);
+
   const table = useDataTable(
     "testing",
     {
@@ -65,5 +68,16 @@ export default function Home() {
     table.fetchData();
   }, []);
 
-  return <div className="">{table.table()}</div>;
+  return (
+    <div className="">
+      <Button
+        onClick={() =>
+          utils.showToastV2("success", "Attention", "Your message")
+        }
+      >
+        Testing Toaster
+      </Button>
+      {/* {table.table()} */}
+    </div>
+  );
 }

@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 import Model from "./config/model";
-
+import { toastRef } from "./toastRef";
 export const utils = {
   showToast: (type = "info", message = "Attention", description = "") => {
     const options = {
@@ -24,6 +24,21 @@ export const utils = {
       default:
         toast(message, options);
     }
+  },
+
+  showToastV2: (
+    severity = "info",
+    summary = "Attention",
+    detail = "",
+    life = 4000
+  ) => {
+    if (!toastRef?.current) return;
+    toastRef.current.show({
+      severity,
+      summary,
+      detail,
+      life,
+    });
   },
 
   logError: async ({ message, stack, userId, page }) => {

@@ -3,6 +3,9 @@ import "./globals.css";
 import { Toaster } from "sonner";
 
 import { PrimeReactProvider, PrimeReactContext } from "primereact/api";
+import { Toast } from "primereact/toast";
+import { toastRef } from "@/libs/toastRef";
+import ToastProvider from "@/context/ToastProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,7 +29,8 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <PrimeReactProvider>
-          <Toaster
+          <ToastProvider />
+          {/* <Toaster
             position="top-right"
             richColors
             expand={false}
@@ -38,7 +42,7 @@ export default function RootLayout({ children }) {
                 info: "bg-blue-500 text-white border-blue-600",
               },
             }}
-          />
+          /> */}
           {children}
         </PrimeReactProvider>
       </body>
