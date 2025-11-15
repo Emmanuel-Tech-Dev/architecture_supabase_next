@@ -44,10 +44,13 @@ const Model = {
     // Range pagination
     if (range) query = query.range(range.from, range.to);
 
-    const { data, error } = await query;
+    const { data, count, error } = await query;
 
     if (error) throw error;
-    return data;
+    return {
+      data,
+      count,
+    };
   },
 
   insert: async (table, payload, autoFetch = false) => {
