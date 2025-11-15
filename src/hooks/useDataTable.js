@@ -9,35 +9,35 @@ import { useEffect, useState } from "react";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { supabase } from "@/libs/config/conn";
 
-// Apply static filters to Supabase query
-const applyFiltersToQuery = (query, filters) => {
-  filters.forEach(({ field, op, value }) => {
-    if (op === "ilike") {
-      query = query.ilike(field, value);
-    } else if (op === "not.ilike") {
-      query = query.not(field, "ilike", value);
-    } else if (op === "in") {
-      const inValues = value
-        .replace(/[()]/g, "")
-        .split(",")
-        .map((v) => v.trim());
-      query = query.in(field, inValues);
-    } else if (op === "eq") {
-      query = query.eq(field, value);
-    } else if (op === "neq") {
-      query = query.neq(field, value);
-    } else if (op === "lt") {
-      query = query.lt(field, value);
-    } else if (op === "lte") {
-      query = query.lte(field, value);
-    } else if (op === "gt") {
-      query = query.gt(field, value);
-    } else if (op === "gte") {
-      query = query.gte(field, value);
-    }
-  });
-  return query;
-};
+// // Apply static filters to Supabase query
+// const applyFiltersToQuery = (query, filters) => {
+//   filters.forEach(({ field, op, value }) => {
+//     if (op === "ilike") {
+//       query = query.ilike(field, value);
+//     } else if (op === "not.ilike") {
+//       query = query.not(field, "ilike", value);
+//     } else if (op === "in") {
+//       const inValues = value
+//         .replace(/[()]/g, "")
+//         .split(",")
+//         .map((v) => v.trim());
+//       query = query.in(field, inValues);
+//     } else if (op === "eq") {
+//       query = query.eq(field, value);
+//     } else if (op === "neq") {
+//       query = query.neq(field, value);
+//     } else if (op === "lt") {
+//       query = query.lt(field, value);
+//     } else if (op === "lte") {
+//       query = query.lte(field, value);
+//     } else if (op === "gt") {
+//       query = query.gt(field, value);
+//     } else if (op === "gte") {
+//       query = query.gte(field, value);
+//     }
+//   });
+//   return query;
+// };
 
 export const useDataTable = (
   tableName,
