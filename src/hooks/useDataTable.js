@@ -182,7 +182,7 @@ export const useDataTable = (
       });
 
       setData(res.data || []);
-      console.log(res, range);
+
       setTotalRecords(res.count || 0);
     } catch (err) {
       console.error("Table Fetch Error:", err);
@@ -246,8 +246,8 @@ export const useDataTable = (
           key={col.field}
           field={col.field}
           header={col.header}
-          sortable={col.sortable ?? true}
-          filter={col.filter ?? true}
+          sortable={col.sortable}
+          filter={col.filter}
           filterPlaceholder={`Search ${col.header}`}
           body={col.body}
           style={col.style}

@@ -89,8 +89,6 @@ export default function Page() {
     ]);
   }, []);
 
-  console.log("This is a lazy", lazyParams);
-
   // 3. Custom Header Component
   const header = (
     <div className="flex flex-wrap items-center justify-between gap-2">

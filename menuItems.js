@@ -9,6 +9,14 @@ export default function getMenuItems(router, defaultRoute) {
       },
     },
     {
+      id: "affiliates",
+      label: "Affiliates",
+      icon: "pi pi-user",
+      command: () => {
+        router.push(`${defaultRoute}/affiliates`);
+      },
+    },
+    {
       id: "analytics",
       label: "Analytics",
       icon: "pi pi-chart-line",

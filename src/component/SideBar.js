@@ -21,7 +21,7 @@ export default function AppSidebar({
   return (
     <div
       className={`fixed left-0 top-0 h-full bg-slate-900 text-white transition-all duration-300 z-50 ${
-        isCollapsed ? "w-20" : "w-64"
+        isCollapsed ? "w-20" : "w-54"
       }`}
     >
       <div className="flex items-center justify-between p-4 border-b border-slate-700">

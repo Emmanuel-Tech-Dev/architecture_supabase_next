@@ -32,7 +32,7 @@ export default function AppLayout({ children }) {
 
       <main
         className={`transition-all duration-300 pt-20 pb-6 min-h-screen ${
-          isCollapsed ? "ml-20" : "ml-64"
+          isCollapsed ? "ml-20" : "ml-54"
         }`}
       >
         <div className="px-6">{children}</div>
