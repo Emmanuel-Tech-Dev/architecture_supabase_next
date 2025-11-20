@@ -31,7 +31,7 @@ export const useDataScroller = (
           message: error?.message,
           stack: error?.stack,
           userId: null,
-          page: cleintPage || window?.location?.pathname,
+          page: window?.location?.pathname,
         });
       }
       setLoading(false);

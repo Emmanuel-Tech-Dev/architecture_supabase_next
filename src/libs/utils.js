@@ -51,4 +51,27 @@ export const utils = {
       });
     } catch (e) {}
   },
+  getSupabaseOperator(matchMode) {
+    const map = {
+      startsWith: "ilike", // value%
+      contains: "ilike", // %value%
+      notContains: "not.ilike", // not %value%
+      endsWith: "ilike", // %value
+      equals: "eq",
+      notEquals: "neq",
+      lt: "lt",
+      lte: "lte",
+      gt: "gt",
+      gte: "gte",
+    };
+    return map[matchMode] || "eq";
+  },
+
+  formatFilterValue(matchMode, value) {
+    if (matchMode === "contains") return `%${value}%`;
+    if (matchMode === "startsWith") return `${value}%`;
+    if (matchMode === "endsWith") return `%${value}`;
+    if (matchMode === "notContains") return `%${value}%`;
+    return value;
+  },
 };

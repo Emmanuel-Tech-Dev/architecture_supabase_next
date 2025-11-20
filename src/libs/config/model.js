@@ -13,17 +13,20 @@ const Model = {
       textSearch = null, // { column: "name", query: "john" , type: "websearch" }
     } = {}
   ) => {
-    let query = supabase.from(table).select(select);
+    let query = supabase.from(table).select(select, { count: "exact" });
 
     // Dynamic filters GET/POST etc
     if (filters.length > 0) {
       filters.forEach((f) => {
-        query = query[f.op](f.field, f.value);
-        // example: query.eq("status", "active")
-        // example: query.gte("age", 18)
+        // Handle special case for negated operators if necessary
+        if (f.op === "not.ilike") {
+          query = query.not(f.field, "ilike", f.value);
+        } else {
+          // Standard operators (eq, ilike, gt, etc)
+          query = query[f.op](f.field, f.value);
+        }
       });
     }
-
     if (textSearch) {
       query = query.textSearch(textSearch.column, textSearch.query, {
         type: textSearch.type || "websearch",

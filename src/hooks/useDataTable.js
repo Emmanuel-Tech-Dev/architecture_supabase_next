@@ -1,385 +1,277 @@
 "use client";
+import { useState, useEffect, useCallback } from "react";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
+import { FilterMatchMode, FilterOperator } from "primereact/api"; // Import these
 import Model from "@/libs/config/model";
 import { utils } from "@/libs/utils";
 
-import { Button } from "primereact/button";
-import { Column } from "primereact/column";
-import { DataTable } from "primereact/datatable";
-import { useEffect, useState } from "react";
-import { FilterMatchMode, FilterOperator } from "primereact/api";
-import { supabase } from "@/libs/config/conn";
+function useDebounce(value, delay) {
+  const [debounceValue, setDebounceValue] = useState(value);
 
-// // Apply static filters to Supabase query
-// const applyFiltersToQuery = (query, filters) => {
-//   filters.forEach(({ field, op, value }) => {
-//     if (op === "ilike") {
-//       query = query.ilike(field, value);
-//     } else if (op === "not.ilike") {
-//       query = query.not(field, "ilike", value);
-//     } else if (op === "in") {
-//       const inValues = value
-//         .replace(/[()]/g, "")
-//         .split(",")
-//         .map((v) => v.trim());
-//       query = query.in(field, inValues);
-//     } else if (op === "eq") {
-//       query = query.eq(field, value);
-//     } else if (op === "neq") {
-//       query = query.neq(field, value);
-//     } else if (op === "lt") {
-//       query = query.lt(field, value);
-//     } else if (op === "lte") {
-//       query = query.lte(field, value);
-//     } else if (op === "gt") {
-//       query = query.gt(field, value);
-//     } else if (op === "gte") {
-//       query = query.gte(field, value);
-//     }
-//   });
-//   return query;
-// };
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebounceValue(value);
+    }, delay);
+    return () => clearTimeout(handler);
+  }, [value, delay]);
+
+  return debounceValue;
+}
 
 export const useDataTable = (
   tableName,
-  initTblParams = {
-    pagination: { rows: 10, rowsPerPageOptions: [5, 10, 20, 50] },
-    filters: {
-      global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    },
-    supabaseFilters: [], // Additional static filters (applied server-side)
-    order: { field: "createdAt", ascending: false },
-  },
-  rowkey = "id",
-  autoFetch = true
+  initConfig = {},
+  rowKey = "id",
+  autoFetch = "true"
 ) => {
+  // --- STATE ---
   const [data, setData] = useState([]);
-
-  const [column, setClolumn] = useState([]);
-  const [cleintPage, setClientPage] = useState();
-  const [width, setwidth] = useState();
-  const [footer, setFooter] = useState(true);
-  const [header, setHeader] = useState(true);
-  const [customHeader, setCustomHeader] = useState(null);
-  const [customFooter, setCustomFooter] = useState(null);
-  const [loading, setLoading] = useState(false);
-
-  // Server-side pagination
   const [totalRecords, setTotalRecords] = useState(0);
-  const [first, setFirst] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [columns, setColumns] = useState([]);
+  const [rowSelection, setRowSelection] = useState(false);
+  const [rowSelected, setRowSelected] = useState();
+  const [selectionMode, setSelectionMode] = useState("multiple");
 
-  // Static Supabase filters (applied server-side, don't change via UI)
-  const [staticSupabaseFilters, setStaticSupabaseFilters] = useState(
-    initTblParams.supabaseFilters || []
-  );
-  const [orderBy, setOrderBy] = useState(
-    initTblParams.order || { field: "createdAt", ascending: false }
-  );
-
-  const [paginatorProps, setPaginatorProps] = useState(paginatorPropsBuilder());
-  const [params, setParams] = useState({
-    ...initTblParams.pagination,
-  });
-
-  // Initialize filters with proper structure for each column
-  const initializeFilters = () => {
-    const baseFilters = {
-      global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    };
-
-    // If columns are provided in initTblParams, initialize their filters
-    if (initTblParams.columns) {
-      initTblParams.columns.forEach((col) => {
-        if (col.filter !== false) {
-          baseFilters[col.field] = {
-            operator: FilterOperator.AND,
-            constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
-          };
-        }
-      });
-    }
-
-    return { ...baseFilters, ...(initTblParams?.filters || {}) };
-  };
-
-  const [filters, setFilters] = useState(initializeFilters());
+  //GLOBAL FILTERS
   const [globalFilterValue, setGlobalFilterValue] = useState("");
 
-  // Table styling States
-  const [showGridLines, setShowGridLines] = useState(false);
-  const [size, setSize] = useState("normal");
+  // Debounce the global filter value (wait 500ms)
+  const debouncedGlobalFilter = useDebounce(globalFilterValue, 500);
 
-  // Fetch ALL data with only static filters (for client-side filtering)
-  async function fetchAllData() {
-    try {
-      setLoading(true);
-      if (autoFetch === false && tableName == null) return;
+  // Initialize lazyParams
+  const [lazyParams, setLazyParams] = useState({
+    first: 0,
+    rows: initConfig.rows || 10,
+    page: 0,
+    sortField: initConfig.sortField || "created_at",
+    sortOrder: initConfig.sortOrder || -1,
+    filters: {}, // Will be populated by setTableColumns
+  });
 
-      // Build query with only static filters
-      // let query = supabase.from(tableName).select("*");
+  const [debugQuery, setDebugQuery] = useState(null);
 
-      // // Apply static filters
-      // query = applyFiltersToQuery(query, staticSupabaseFilters);
+  // --- FILTER INITIALIZATION (The Fix) ---
+  // This recreates the logic you had in your original code
+  const initFilters = (cols) => {
+    let _filters = { ...lazyParams.filters };
 
-      // // Apply ordering
-      // query = query.order(orderBy.field, {
-      //   ascending: orderBy.ascending,
-      // });
-
-      // const { data: fetchedData, error } = await query;
-
-      const res = await Model.get(tableName, {
-        // range: { from: first, to: first + params.rows - 1 },
-        order: initTblParams?.order,
-      });
-      console.log("Fetched Data:", res);
-      setData(res?.data || []);
-      setTotalRecords(res?.count || 0);
-      setLoading(false);
-    } catch (error) {
-      utils.showToastV2("error", "Error", "Failed to fetch data");
-      if (process.env.NODE_ENV !== "production") {
-        console.error("Error fetching data:", error);
-      } else {
-        await utils.logError({
-          message: error?.message,
-          stack: error?.stack,
-          userId: null,
-          page: cleintPage || window?.location?.pathname,
-        });
-      }
-      setLoading(false);
-    }
-  }
-
-  // Handle page change (client-side pagination handled by PrimeReact)
-  const onPage = (event) => {
-    setFirst(event.first);
-  };
-
-  // Handle sort change (client-side sorting handled by PrimeReact)
-  const onSort = (event) => {
-    // PrimeReact handles this automatically
-  };
-
-  // Handle filter change (client-side filtering handled by PrimeReact)
-  const onFilter = (event) => {
-    setFilters(event.filters);
-  };
-
-  // Add a static Supabase filter (server-side)
-  const addStaticFilter = (field, op, value) => {
-    const newFilters = [...staticSupabaseFilters, { field, op, value }];
-    setStaticSupabaseFilters(newFilters);
-    return newFilters;
-  };
-
-  // Remove a static Supabase filter
-  const removeStaticFilter = (field) => {
-    const newFilters = staticSupabaseFilters.filter((f) => f.field !== field);
-    setStaticSupabaseFilters(newFilters);
-    return newFilters;
-  };
-
-  // Update a static Supabase filter
-  const updateStaticFilter = (field, op, value) => {
-    const existing = staticSupabaseFilters.find((f) => f.field === field);
-    let newFilters;
-
-    if (existing) {
-      newFilters = staticSupabaseFilters.map((f) =>
-        f.field === field ? { field, op, value } : f
-      );
-    } else {
-      newFilters = [...staticSupabaseFilters, { field, op, value }];
+    // Global filter init
+    if (!_filters["global"]) {
+      _filters["global"] = { value: null, matchMode: FilterMatchMode.CONTAINS };
     }
 
-    setStaticSupabaseFilters(newFilters);
-    return newFilters;
-  };
-
-  // Clear all static Supabase filters
-  const clearStaticFilters = () => {
-    setStaticSupabaseFilters([]);
-  };
-
-  const headerJsx = (props = {}) => {
-    const { children, defaultHeader = true } = props;
-
-    return (
-      <>
-        {defaultHeader && (
-          <div className="flex flex-wrap gap-2 items-center justify-between">
-            <span className="text-xl text-900 font-bold">Products</span>
-            <Button
-              icon="pi pi-refresh"
-              rounded
-              raised
-              onClick={() => fetchAllData()}
-            />
-          </div>
-        )}
-        {children ?? null}
-      </>
-    );
-  };
-
-  const renderCustomHeader = (props) => {
-    setCustomHeader(headerJsx(props));
-  };
-
-  const footerJsx = (props = {}) => {
-    const { children, defaultFooter = true } = props;
-
-    return (
-      <>
-        {defaultFooter && (
-          <div>In total there are {data?.length || 0} items.</div>
-        )}
-        {children ?? null}
-      </>
-    );
-  };
-
-  const renderCustomFooter = (props) => {
-    setCustomFooter(footerJsx(props));
-  };
-
-  function paginatorPropsBuilder(left = null, right = null) {
-    return {
-      paginatorTemplate:
-        "RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink",
-      currentPageReportTemplate: "{first} to {last} of {totalRecords}",
-      paginatorLeft: left,
-      paginatorRight: right,
-    };
-  }
-
-  function createPaginatorProps(left = null, right = null) {
-    setPaginatorProps(paginatorPropsBuilder(left, right));
-  }
-
-  // Global filter change (client-side)
-  function globalFilterChange(e) {
-    const value = e.target.value;
-    let _filters = { ...filters };
-    _filters["global"].value = value;
-    setFilters(_filters);
-    setGlobalFilterValue(value);
-  }
-
-  const clearFilter = () => {
-    const defaultFilters = initializeFilters();
-    setFilters(defaultFilters);
-    setGlobalFilterValue("");
-  };
-
-  // Initialize column filters when columns are set
-  const setClolumnWithFilters = (cols) => {
-    setClolumn(cols);
-
-    // Initialize filters for each column
-    const newFilters = { ...filters };
+    // Column filters init
     cols.forEach((col) => {
-      if (col.filter !== false && !newFilters[col.field]) {
-        newFilters[col.field] = {
+      if (col.filter !== false) {
+        // Only init if filter is enabled
+        _filters[col.field] = {
           operator: FilterOperator.AND,
-          constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
+          constraints: [
+            {
+              value: null,
+              matchMode: col.filterMatchMode || FilterMatchMode.CONTAINS,
+            },
+          ],
         };
       }
     });
-    setFilters(newFilters);
+    return _filters;
   };
 
-  // Fetch data when static filters change
-  // useEffect(() => {
-  //   if (autoFetch) {
-  //     fetchAllData();
-  //   }
-  // }, [staticSupabaseFilters]);
-
-  const table = () => {
-    return (
-      <div className="card">
-        <DataTable
-          value={data}
-          header={header && (customHeader || headerJsx())}
-          lazy={false}
-          paginator
-          {...paginatorProps}
-          rows={params.rows}
-          rowsPerPageOptions={params?.rowsPerPageOptions}
-          filters={filters}
-          filterDisplay="menu"
-          globalFilterFields={column.map((col) => col.field)}
-          tableStyle={{ minWidth: width || "50rem" }}
-          size={size}
-          showGridlines={showGridLines}
-          stripedRows
-          removableSort
-          footer={footer && (customFooter || footerJsx())}
-          dataKey={rowkey}
-          loading={loading}
-        >
-          {column?.map((col) => {
-            const isAction =
-              String(col.field).toLowerCase() === "action" ||
-              String(col.header).toLowerCase() === "action";
-
-            return (
-              <Column
-                key={col.field}
-                field={col.field}
-                header={col.header}
-                body={col?.body}
-                // disable sorting for action column
-                sortable={isAction ? false : col.sortable !== false}
-                // disable filtering for action column
-                filter={isAction ? false : col.filter !== false}
-                filterField={col.field}
-                filterPlaceholder={
-                  isAction
-                    ? ""
-                    : col.filterPlaceholder || `Search by ${col.header}`
-                }
-                showFilterMenu={isAction ? false : col.filter !== false}
-              />
-            );
-          })}
-        </DataTable>
-      </div>
-    );
+  // Use this instead of setColumns directly in your page
+  const setTableColumns = (cols) => {
+    setColumns(cols);
+    // Initialize filters based on these new columns
+    const initialFilters = initFilters(cols);
+    setLazyParams((prev) => ({ ...prev, filters: initialFilters }));
   };
+
+  const onSelectionChange = (e) => {
+    const value = e.value;
+    console.log(value);
+    setRowSelected(value);
+  };
+
+  const onSelectAllChange = (event) => {};
+  // --- FETCH LOGIC ---
+  const fetchData = useCallback(async () => {
+    if (!tableName) return;
+
+    setLoading(true);
+    try {
+      const range = {
+        from: lazyParams.first,
+        to: lazyParams.first + lazyParams.rows - 1,
+      };
+
+      const order = lazyParams.sortField
+        ? {
+            field: lazyParams.sortField,
+            ascending: lazyParams.sortOrder === 1,
+          }
+        : null;
+
+      // --- FILTER PARSING LOGIC ---
+      const activeFilters = [];
+      const globalSearchString = debouncedGlobalFilter;
+
+      if (lazyParams.filters) {
+        Object.keys(lazyParams.filters).forEach((field) => {
+          const filterMeta = lazyParams.filters[field];
+
+          // Handle Global
+          if (field === "global") return;
+
+          // Handle "Menu" Mode (Constraints Array)
+          if (filterMeta && filterMeta.constraints) {
+            filterMeta.constraints.forEach((constraint) => {
+              if (
+                constraint.value !== null &&
+                constraint.value !== undefined &&
+                constraint.value !== ""
+              ) {
+                activeFilters.push({
+                  field: field,
+                  op: utils.getSupabaseOperator(constraint.matchMode),
+                  value: utils.formatFilterValue(
+                    constraint.matchMode,
+                    constraint.value
+                  ),
+                });
+              }
+            });
+          }
+          // Handle "Row" Mode (Direct Object) - Fallback
+          else if (filterMeta && filterMeta.value !== null) {
+            activeFilters.push({
+              field: field,
+              op: getSupabaseOperator(filterMeta.matchMode),
+              value: formatFilterValue(filterMeta.matchMode, filterMeta.value),
+            });
+          }
+        });
+      }
+
+      // Construct OR query for Global Search
+      let orQuery = null;
+      if (globalSearchString && columns.length > 0) {
+        const searchable = columns
+          .filter((c) => c.filter !== false && c.field !== "action")
+          .map((c) => `${c.field}.ilike.%${globalSearchString}%`)
+          .join(",");
+        if (searchable) orQuery = searchable;
+      }
+
+      // Debugging
+      setDebugQuery({
+        table: tableName,
+        range,
+        order,
+        filters: activeFilters,
+        or: orQuery,
+        timestamp: new Date().toLocaleTimeString(),
+      });
+
+      const res = await Model.get(tableName, {
+        range,
+        order,
+        filters: activeFilters,
+        or: orQuery,
+      });
+
+      setData(res.data || []);
+      console.log(res, range);
+      setTotalRecords(res.count || 0);
+    } catch (err) {
+      console.error("Table Fetch Error:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [tableName, lazyParams, columns, debouncedGlobalFilter]);
+
+  // // Fetch on params change
+  useEffect(() => {
+    if (!autoFetch) return;
+    fetchData();
+  }, [fetchData, autoFetch]);
+
+  // --- EVENTS ---
+  const onPage = (e) => setLazyParams((prev) => ({ ...prev, ...e }));
+  const onSort = (e) => setLazyParams((prev) => ({ ...prev, ...e }));
+  const onFilter = (e) => {
+    // PrimeReact returns the whole new filter object structure here
+    setLazyParams((prev) => ({ ...prev, filters: e.filters }));
+  };
+
+  const onGlobalFilterChange = (e) => {
+    setGlobalFilterValue(e.target.value);
+  };
+
+  // --- RENDERER ---
+  const renderTable = (props = {}) => (
+    <DataTable
+      value={data}
+      lazy
+      dataKey={rowKey}
+      paginator
+      first={lazyParams.first}
+      rows={lazyParams.rows}
+      totalRecords={totalRecords}
+      onPage={onPage}
+      onSort={onSort}
+      sortField={lazyParams.sortField}
+      sortOrder={lazyParams.sortOrder}
+      onFilter={onFilter}
+      filters={lazyParams.filters}
+      selection={rowSelected}
+      onSelectionChange={onSelectionChange}
+      selectAll={rowSelection}
+      filterDisplay="menu" // <--- IMPORTANT: Matches the constraints structure
+      tableStyle={{ minWidth: "50rem" }}
+      rowsPerPageOptions={[5, 10, 20, 50]}
+      globalFilterFields={columns.map((c) => c.field)} // Needed for global search to not crash
+      {...props}
+    >
+      {selectionMode && (
+        <Column
+          selectionMode={selectionMode}
+          style={{ width: "3em" }}
+          headerStyle={{ width: "3em" }} // Added header style for consistency
+        />
+      )}
+      {columns.map((col) => (
+        <Column
+          key={col.field}
+          field={col.field}
+          header={col.header}
+          sortable={col.sortable ?? true}
+          filter={col.filter ?? true}
+          filterPlaceholder={`Search ${col.header}`}
+          body={col.body}
+          style={col.style}
+          // Pass specific match modes if needed (e.g., for dates)
+          filterMatchMode={col.filterMatchMode || FilterMatchMode.CONTAINS}
+        />
+      ))}
+    </DataTable>
+  );
 
   return {
-    data,
-    setData,
-    column,
-    setClolumn: setClolumnWithFilters,
-    table,
-    cleintPage,
-    setClientPage,
-    fetchData: fetchAllData,
-    width,
-    setwidth,
-    setFooter,
-    setSize,
-    setHeader,
-    renderCustomHeader,
-    renderCustomFooter,
-    setShowGridLines,
-    paginatorProps: createPaginatorProps,
-    setParams,
-    globalFilterChange,
+    renderTable,
+    setColumns: setTableColumns, // Export the custom setter
+    columns,
+    onGlobalFilterChange,
     globalFilterValue,
-    clearFilter,
-    setLoading,
-    // Static filter methods (applied server-side on data fetch)
-    addStaticFilter,
-    removeStaticFilter,
-    updateStaticFilter,
-    clearStaticFilters,
-    staticSupabaseFilters,
-    setOrderBy,
-    totalRecords,
+    refresh: fetchData,
+    fetchData,
+    debugQuery,
+    loading,
+    setSelectionMode,
+    rowSelected,
+    data,
+    columns,
+    lazyParams,
   };
 };

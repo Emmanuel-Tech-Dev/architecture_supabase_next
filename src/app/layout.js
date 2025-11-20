@@ -1,11 +1,8 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "sonner";
 
-import { PrimeReactProvider, PrimeReactContext } from "primereact/api";
-import { Toast } from "primereact/toast";
-import { toastRef } from "@/libs/toastRef";
 import ToastProvider from "@/context/ToastProvider";
+import PrimeReactWrapper from "@/context/PrimeReactWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,7 +25,7 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <PrimeReactProvider>
+        <PrimeReactWrapper>
           <ToastProvider />
           {/* <Toaster
             position="top-right"
@@ -44,7 +41,7 @@ export default function RootLayout({ children }) {
             }}
           /> */}
           {children}
-        </PrimeReactProvider>
+        </PrimeReactWrapper>
       </body>
     </html>
   );

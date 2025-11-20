@@ -27,3 +27,45 @@
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 } */
+
+/* NProgress custom styles */
+/* NProgress custom styles with CSS variables */
+:root {
+  --sidebar-width: 256px; /* w-64 */
+  --topbar-height: 64px; /* h-16 */
+}
+
+body:has(.sidebar-collapsed) {
+  --sidebar-width: 80px; /* w-20 */
+}
+
+#nprogress {
+  pointer-events: none;
+}
+
+#nprogress .bar {
+  background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%) !important;
+  position: fixed;
+  /* z-index: 12; */
+  top: var(--topbar-height) !important;
+  left: var(--sidebar-width) !important;
+  right: 0;
+  width: auto !important;
+  height: 3px;
+  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#nprogress .peg {
+  box-shadow: 0 0 10px #3b82f6, 0 0 5px #3b82f6;
+  display: block;
+  position: absolute;
+  right: 0px;
+  width: 100px;
+  height: 100%;
+  opacity: 1;
+  transform: rotate(3deg) translate(0px, -4px);
+}
+
+#nprogress .spinner {
+  display: none !important;
+}
