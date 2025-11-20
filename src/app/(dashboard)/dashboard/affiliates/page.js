@@ -85,6 +85,9 @@ export default function Page() {
       sortable: true,
       //   filter: true,
       filterMatchMode: FilterMatchMode.EQUALS,
+      body: (rowData) => (
+        <span>{utils.percentageFormatter(rowData?.commission_rate)}</span>
+      ),
     },
     {
       field: "status",

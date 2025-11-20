@@ -21,7 +21,7 @@ export default function AppSidebar({
   return (
     <div
       className={`fixed left-0 top-0 h-full bg-slate-900 text-white transition-all duration-300 z-50 ${
-        isCollapsed ? "w-20" : "w-54"
+        isCollapsed ? "w-20" : "w-58"
       }`}
     >
       <div className="flex items-center justify-between p-4 border-b border-slate-700">
@@ -35,8 +35,11 @@ export default function AppSidebar({
         )}
         <Button
           icon={isCollapsed ? "pi pi-angle-right" : "pi pi-angle-left"}
-          className="p-button-text p-button-plain text-white hover:bg-slate-800"
+          // className="p-button-text p-button-plain text-white hover:bg-slate-800"
           onClick={() => setIsCollapsed(!isCollapsed)}
+          size="small"
+          text
+          aria-label="Closible"
         />
       </div>
 

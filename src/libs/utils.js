@@ -132,8 +132,9 @@ export const utils = {
     const percentageFormatter = new Intl.NumberFormat("en-US", {
       style: "percent",
       minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
     });
-    return percentageFormatter.format(value);
+    return percentageFormatter.format(value / 100);
   },
 
   formatNumber: (value) => {
