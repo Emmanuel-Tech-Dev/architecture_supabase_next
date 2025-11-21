@@ -8,7 +8,7 @@ export default function Topbar({ isCollapsed }) {
       }`}
     >
       <h1 className="text-xl font-semibold text-gray-800">
-        PrimeReact Admin Dashboard
+        OpenRef Admin Dashboard
       </h1>
 
       <div className="flex items-center gap-3">

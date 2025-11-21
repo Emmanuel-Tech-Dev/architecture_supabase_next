@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { FilterMatchMode, FilterOperator } from "primereact/api"; // Import these
+import { FilterMatchMode, FilterOperator, FilterService } from "primereact/api"; // Import these
 import Model from "@/libs/config/model";
 import { utils } from "@/libs/utils";
 
@@ -18,6 +18,14 @@ function useDebounce(value, delay) {
 
   return debounceValue;
 }
+
+FilterService.register("custom_activity", (value, filters) => {
+  const [from, to] = filters ?? [null, null];
+  if (from === null && to === null) return true;
+  if (from !== null && to === null) return from <= value;
+  if (from === null && to !== null) return value <= to;
+  return from <= value && value <= to;
+});
 
 export const useDataTable = (
   tableName,
@@ -229,7 +237,7 @@ export const useDataTable = (
       onSelectionChange={onSelectionChange}
       selectAll={rowSelection}
       filterDisplay="menu" // <--- IMPORTANT: Matches the constraints structure
-      tableStyle={{ minWidth: "50rem" }}
+      // tableStyle={{ minWidth: "50rem" }}
       rowsPerPageOptions={[5, 10, 20, 50]}
       globalFilterFields={columns.map((c) => c.field)} // Needed for global search to not crash
       {...props}
@@ -249,6 +257,9 @@ export const useDataTable = (
           sortable={col.sortable}
           filter={col.filter}
           filterPlaceholder={`Search ${col.header}`}
+          filterField={col?.filterField}
+          showFilterMatchModes={col?.showFilterMatchModes}
+          filterElement={col?.filterElement}
           body={col.body}
           style={col.style}
           // Pass specific match modes if needed (e.g., for dates)

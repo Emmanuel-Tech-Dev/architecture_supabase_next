@@ -509,7 +509,7 @@ export const utils = {
 
     return [year, month, day].join(joiner);
   },
-  formatDateV3(date, format = "dddd, MMMM D, YYYY") {
+  formatDateV3(date, format = "MMM D, YYYY") {
     const d = dayjs(date);
     return d?.format(format);
   },
@@ -538,5 +538,62 @@ export const utils = {
     const endDate = new Date(end);
     const days = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
     return days;
+  },
+  getColumnStatusColor(status) {
+    switch (status) {
+      case "active":
+        return "success";
+
+      case "pending":
+        return "warning";
+
+      case "suspended":
+        return "danger";
+
+      default:
+        return null;
+    }
+  },
+
+  getColumnStatusColorV2(
+    status,
+    keys = ["active", "pending", "blocked"],
+    colors = ["success", "warning", "danger"]
+  ) {
+    const index = keys.indexOf(status);
+    return colors[index] ?? null;
+  },
+
+  resolveColors(key) {
+    const COLOR_MAP = {
+      totalAffiliates: {
+        bg: "bg-[#E8F0FF]",
+        iconBg: "bg-[#D6E4FF]",
+        text: "text-[#1A3A8F]",
+      },
+      activeAffiliates: {
+        bg: "bg-[#E9F9EE]",
+        iconBg: "bg-[#D1F4DA]",
+        text: "text-[#1D7A36]",
+      },
+      avgRevenue: {
+        bg: "bg-[#F3E8FF]",
+        iconBg: "bg-[#E8D4FF]",
+        text: "text-[#7A1DB8]",
+      },
+      topPerformer: {
+        bg: "bg-[#FFF4E5]",
+        iconBg: "bg-[#FFE9CC]",
+        text: "text-[#B85C00]",
+      },
+    };
+
+    // fallback colors for any unknown key
+    const DEFAULT_COLORS = {
+      bg: "#F5F5F5",
+      iconBg: "#E0E0E0",
+      text: "#333333",
+    };
+    return COLOR_MAP[key] || DEFAULT_COLORS;
   },
 };

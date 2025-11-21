@@ -30,7 +30,7 @@ export default function AppSidebar({
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
               <i className="pi pi-chart-bar text-white"></i>
             </div>
-            <span className="font-bold text-lg">Dashboard</span>
+            <span className="font-bold text-lg">OpenRef</span>
           </div>
         )}
         <Button

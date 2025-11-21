@@ -5,6 +5,7 @@ import AppSidebar from "@/component/SideBar";
 import { useEffect, useState } from "react";
 import Loader from "@/component/Loader";
 import useWindowSize from "@/hooks/useWindowSize";
+import ScrollToTop from "@/component/ScrollToTop";
 
 export default function AppLayout({ children }) {
   const [currentPage, setCurrentPage] = useState("dashboard");
@@ -26,6 +27,7 @@ export default function AppLayout({ children }) {
         isCollapsed ? "sidebar-collapsed" : ""
       }`}
     >
+      <ScrollToTop />
       <AppSidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
       <Topbar isCollapsed={isCollapsed} />
       <Loader />
