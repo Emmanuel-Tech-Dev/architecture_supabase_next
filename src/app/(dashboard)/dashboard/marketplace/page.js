@@ -1,4 +1,4 @@
-import {
+import SkeletonLoader, {
   MarketPlaceCardSkeleton,
   MarketPlaceSkeletonGrid,
 } from "@/component/loaders/MarketPlaceSkeleton";

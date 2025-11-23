@@ -47,18 +47,18 @@ const MarketPlace = ({ data }) => {
           )}
 
           {/* Header with Logo */}
-          <div className="bg-linear-to-br from-blue-50 to-indigo-50 p-6">
+          <div className="bg-linear-to-br from-blue-50 to-indigo-50 p-3">
             <div className="flex justify-center">
               {product?.merchants?.logo_url ? (
                 <Image
                   src={product.merchants.logo_url}
                   alt={product.merchants.company_name}
-                  className="w-24 h-24 object-cover rounded-lg shadow-lg ring-4 ring-white"
-                  width={200}
-                  height={200}
+                  className="w-20 h-20 object-cover rounded-lg shadow-lg ring-4 ring-white"
+                  width={150}
+                  height={150}
                 />
               ) : (
-                <div className="w-24 h-24 bg-linear-to-br from-blue-400 to-indigo-500 rounded-lg shadow-lg ring-4 ring-white flex items-center justify-center">
+                <div className="w-20 h-20 bg-linear-to-br from-blue-400 to-indigo-500 rounded-lg shadow-lg ring-4 ring-white flex items-center justify-center">
                   <i className="pi pi-building text-white text-3xl"></i>
                 </div>
               )}
@@ -66,7 +66,7 @@ const MarketPlace = ({ data }) => {
           </div>
 
           {/* Content */}
-          <div className="p-6 -mt-3">
+          <div className="p-3">
             {/* Company Info */}
             <div className="text-center mb-4">
               <h3 className="text-xl font-bold text-gray-900 mb-1">
@@ -78,7 +78,7 @@ const MarketPlace = ({ data }) => {
             </div>
 
             {/* Commission Highlight */}
-            <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 mb-4 border border-green-200">
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-2 mb-2 border border-green-200">
               <div className="flex items-center justify-center gap-2">
                 <i className="pi pi-money-bill text-green-600 text-xl"></i>
                 <div className="text-center">
@@ -93,7 +93,7 @@ const MarketPlace = ({ data }) => {
             </div>
 
             {/* Details Grid */}
-            <div className="space-y-3 mb-5">
+            <div className="space-y-3 mb-3">
               <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                 <div className="flex items-center gap-2">
                   <i className="pi pi-clock text-blue-600"></i>

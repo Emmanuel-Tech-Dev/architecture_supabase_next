@@ -11,14 +11,14 @@ const MarketPlaceCardSkeleton = () => {
         </div>
 
         {/* Header with Logo Skeleton */}
-        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 pb-8">
+        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-3 pb-2">
           <div className="flex justify-center">
-            <Skeleton width="7rem" height="7rem" className="rounded-lg" />
+            <Skeleton width="5rem" height="5rem" className="rounded-lg" />
           </div>
         </div>
 
         {/* Content */}
-        <div className="p-6">
+        <div className="p-3">
           {/* Company Info Skeleton */}
           <div className="text-center mb-4">
             <Skeleton width="60%" height="1.75rem" className="mb-2 mx-auto" />
@@ -89,12 +89,16 @@ const MarketPlaceSkeletonGrid = ({ count = 6 }) => {
 };
 
 // Demo with header skeleton
-export default function App() {
+export default function SkeletonLoader() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-3">
+      <div className="mb-6 space-y-2 ">
+        <Skeleton width="10rem" height="2rem" />{" "}
+        <Skeleton width="17rem" height="1rem" className="rounded-md" />{" "}
+      </div>
+      <div className="max-w-full">
         {/* Header with Sort dropdown skeleton */}
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-6 flex items-center justify-between border-slate-200 border-t border-b py-3">
           <Skeleton width="12rem" height="2rem" />
           <Skeleton width="10rem" height="3rem" className="rounded-md" />
         </div>
