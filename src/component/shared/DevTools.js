@@ -26,7 +26,7 @@ export default function DevTools({ debugQuery }) {
         position="right"
         onHide={() => setVisible(false)}
         className="w-full md:w-30rem bg-gray-900 text-white border-l border-gray-700"
-        maskClassName="backdrop-blur-sm"
+        // maskClassName="backdrop-blur-sm"
       >
         <div className="flex flex-col gap-4">
           <div className="border-b border-gray-700 pb-4">

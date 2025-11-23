@@ -1,5 +1,5 @@
 "use client";
-import PageHeader from "@/component/PageHeader";
+import PageHeader from "@/component/shared/PageHeader";
 import { TabPanel, TabView } from "primereact/tabview";
 import React from "react";
 

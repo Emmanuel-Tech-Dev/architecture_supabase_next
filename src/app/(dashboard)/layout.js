@@ -1,11 +1,11 @@
 "use client";
 
-import Topbar from "@/component/TopBar";
-import AppSidebar from "@/component/SideBar";
+import Topbar from "@/component/shared/TopBar";
+import AppSidebar from "@/component/shared/SideBar";
 import { useEffect, useState } from "react";
-import Loader from "@/component/Loader";
+import Loader from "@/component/loaders/Loader";
 import useWindowSize from "@/hooks/useWindowSize";
-import ScrollToTop from "@/component/ScrollToTop";
+import ScrollToTop from "@/component/shared/ScrollToTop";
 
 export default function AppLayout({ children }) {
   const [currentPage, setCurrentPage] = useState("dashboard");

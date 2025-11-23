@@ -54,6 +54,7 @@ export const utils = {
     } catch (e) {}
   },
   getSupabaseOperator(matchMode) {
+    //translation layer for supabase
     const map = {
       startsWith: "ilike", // value%
       contains: "ilike", // %value%
@@ -70,6 +71,7 @@ export const utils = {
   },
 
   formatFilterValue(matchMode, value) {
+    //translation layer for primeReact
     if (matchMode === "contains") return `%${value}%`;
     if (matchMode === "startsWith") return `${value}%`;
     if (matchMode === "endsWith") return `%${value}`;
@@ -486,7 +488,9 @@ export const utils = {
       }
     }
   },
+
   sleep: (ms) => new Promise((r) => setTimeout(r, ms)),
+
   groupBy: function (xs, key) {
     return xs?.reduce(function (rv, x) {
       (rv[x[key]] = rv[x[key]] || []).push(x);
@@ -511,7 +515,7 @@ export const utils = {
   },
   formatDateV3(date, format = "MMM D, YYYY") {
     const d = dayjs(date);
-    return d?.format(format);
+    return d.isValid() ? d.format(format) : "-";
   },
 
   formatBytes: (bytes) => {
@@ -533,15 +537,22 @@ export const utils = {
     const endDate = dayjs(end);
     return endDate.diff(startDate, "days");
   },
+
   getDaysFromRawDateV2(start, end) {
     const startDate = new Date(start);
     const endDate = new Date(end);
     const days = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
     return days;
   },
+
   getColumnStatusColor(status) {
     switch (status) {
       case "active":
+        return "success";
+
+      case "processing":
+        return "info";
+      case "paid":
         return "success";
 
       case "pending":
@@ -550,9 +561,26 @@ export const utils = {
       case "suspended":
         return "danger";
 
+      case "failed":
+        return "danger";
+
       default:
         return null;
     }
+  },
+
+  getColumnStatusColorV3(status) {
+    const map = {
+      active: "success",
+      true: "success",
+
+      pending: "warning",
+
+      suspended: "danger",
+      false: "danger",
+    };
+
+    return map[String(status)] || null;
   },
 
   getColumnStatusColorV2(

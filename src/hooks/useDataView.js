@@ -1,69 +1,61 @@
+"use client";
+import EmptyState from "@/component/shared/EmptyState";
 import Model from "@/libs/config/model";
 import { utils } from "@/libs/utils";
 import { DataView } from "primereact/dataview";
 import { Dropdown } from "primereact/dropdown";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export const useDataView = (
-  tableName = "testing",
+  tableName = null, // Default to null
   initDataParams = {
     pagination: { rows: 10 },
-    sortOptions: [
-      { label: "Price High to Low", value: "!room_price" },
-      { label: "Price Low to High", value: "room_price" },
-      { label: "Capacity High to Low", value: "!room_capacity" },
-      { label: "Capacity Low to High", value: "room_capacity" },
-      { label: "Available Spots High to Low", value: "!available_spots" },
-      { label: "Available Spots Low to High", value: "available_spots" },
-    ],
+    sortOptions: [],
+    initialData: [], // ADDED: Allow passing initial data
   },
   itemsList,
   autoFetch = true
 ) => {
-  const [data, setData] = useState([]);
+  // Initialize state with passed data or empty array
+  const [data, setData] = useState(initDataParams.initialData || []);
   const [loading, setLoading] = useState(false);
 
   const [dataParams, setDataParams] = useState({
-    ...{
-      pagination: { rows: 10 },
-      sortOptions: [
-        { label: "Price High to Low", value: "!room_price" },
-        // ... rest of sortOptions array
-      ],
-    },
+    pagination: { rows: 10 },
+    sortOptions: [
+      { label: "Price High to Low", value: "!commision_value" },
+      { label: "Price Low to High", value: "commision_value" },
+    ],
     ...initDataParams,
   });
 
-  // FIXED: default must be null
   const [sortKey, setSortKey] = useState(null);
   const [sortOrder, setSortOrder] = useState(0);
   const [sortField, setSortField] = useState("");
 
   async function fetchData() {
+    // FIXED: Do not fetch if tableName is missing
+    if (!tableName) return;
+
     try {
-      if (autoFetch === false && tableName == null) return;
+      if (autoFetch === false) return;
 
       setLoading(true);
-
       const res = await Model.get(tableName);
       setData(res.data || []);
-      console.log("DataView fetched data:", res.data);
       setLoading(false);
     } catch (error) {
       utils.showToastV2("error", "Error", "Failed to fetch data");
-      if (process.env.NODE_ENV !== "production") {
-        console.error("Error fetching data:", error);
-      } else {
-        await utils.logError({
-          message: error?.message,
-          stack: error?.stack,
-          userId: null,
-          page: cleintPage || window?.location?.pathname,
-        });
-      }
       setLoading(false);
     }
   }
+
+  // Fetch data on mount ONLY if a table name exists
+  useEffect(() => {
+    if (tableName) {
+      fetchData();
+    }
+  }, [tableName]);
 
   const onSortChange = (event) => {
     const value = event.value;
@@ -79,42 +71,53 @@ export const useDataView = (
     }
   };
 
-  const listTemplate = (items, dataKey = "id") => {
-    // Safety: Ensure itemsList is a function
+  const listTemplate = (items) => {
+    if (!items || items.length === 0) return <EmptyState />;
+
     const renderItem =
-      itemsList || ((p) => <div key={p[dataKey]}>{JSON.stringify(p)}</div>);
+      itemsList || ((p) => <div key={p.id}>{JSON.stringify(p)}</div>);
+
     return (
-      <div className="" key={items[dataKey]}>
-        {items?.map((p, i) => renderItem(p, i))}
+      <div className="grid grid-col-2 md:grid-cols-3 p-5 ">
+        {items.map((product, index) => renderItem(product, index))}
       </div>
     );
   };
 
-  const header = () => {
+  const renderHeaderDropdown = () => {
     return (
       <Dropdown
-        options={dataParams?.sortOptions || []} // FIXED: Fallback to empty array to prevent crash
+        options={dataParams?.sortOptions || []}
         value={sortKey}
         optionLabel="label"
-        placeholder="Sort By Price"
+        placeholder="Sort By"
         onChange={onSortChange}
-        className="w-full sm:w-14rem"
+        className="w-65"
       />
     );
   };
 
-  const dataView = () => {
+  // FIXED: Logic to merge custom header with Sort Dropdown
+  const dataView = (prop = {}) => {
+    const combinedHeader = (
+      <div className="flex sm:flex-row justify-between items-center gap-2">
+        <span className="text-xl font-bold">{prop.header || ""}</span>
+        {renderHeaderDropdown()}
+      </div>
+    );
+
     return (
       <div className="card">
         <DataView
           value={data}
-          listTemplate={listTemplate}
+          listTemplate={listTemplate} // PrimeReact will pass the specific page items here
           loading={loading}
           paginator
           rows={dataParams?.pagination?.rows}
-          header={header()}
           sortField={sortField}
           sortOrder={sortOrder}
+          {...prop} // Spread props
+          header={combinedHeader} // Override header LAST to ensure our logic persists
         />
       </div>
     );
@@ -127,5 +130,8 @@ export const useDataView = (
     dataView,
     fetchData,
     loading,
+    onSortChange,
+    dataParams,
+    sortField,
   };
 };

@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Avatar } from "primereact/avatar";
 import { Button } from "primereact/button";
 import { useRouter } from "next/navigation";
-import getMenuItems from "../../menuItems";
+import getMenuItems from "../../../menuItems";
 
 export default function AppSidebar({
   currentPage,
@@ -20,11 +20,12 @@ export default function AppSidebar({
 
   return (
     <div
-      className={`fixed left-0 top-0 h-full bg-slate-900 text-white transition-all duration-300 z-50 ${
+      className={`fixed left-0 top-0 h-full bg-slate-900 text-white transition-all duration-300 z-50 flex flex-col ${
         isCollapsed ? "w-20" : "w-58"
       }`}
     >
-      <div className="flex items-center justify-between p-4 border-b border-slate-700">
+      {/* HEADER — FIXED */}
+      <div className="flex items-center justify-between p-4 border-b border-slate-700 shrink-0">
         {!isCollapsed && (
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
@@ -35,15 +36,37 @@ export default function AppSidebar({
         )}
         <Button
           icon={isCollapsed ? "pi pi-angle-right" : "pi pi-angle-left"}
-          // className="p-button-text p-button-plain text-white hover:bg-slate-800"
           onClick={() => setIsCollapsed(!isCollapsed)}
           size="small"
           text
-          aria-label="Closible"
+          aria-label="Collapsible"
         />
       </div>
 
-      <nav className="p-3">
+      {/* MIDDLE MENU — SCROLLABLE */}
+      <div className="overflow-y-auto flex-1 px-3 py-4 scrollbar-custom">
+        <style jsx>{`
+          .scrollbar-custom {
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(59, 130, 246, 0.5) rgba(51, 65, 85, 0.3);
+          }
+          .scrollbar-custom::-webkit-scrollbar {
+            width: 6px;
+          }
+          .scrollbar-custom::-webkit-scrollbar-track {
+            background: rgba(51, 65, 85, 0.3);
+            border-radius: 10px;
+          }
+          .scrollbar-custom::-webkit-scrollbar-thumb {
+            background: rgba(59, 130, 246, 0.5);
+            border-radius: 10px;
+            transition: background 0.3s ease;
+          }
+          .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+            background: rgba(59, 130, 246, 0.8);
+          }
+        `}</style>
         {menuItems.map((item) => (
           <button
             key={item.id}
@@ -58,9 +81,10 @@ export default function AppSidebar({
             {!isCollapsed && <span className="font-medium">{item.label}</span>}
           </button>
         ))}
-      </nav>
+      </div>
 
-      <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-slate-700">
+      {/* FOOTER — FIXED */}
+      <div className="p-4 border-t border-slate-700 shrink-0">
         <div
           className={`flex items-center gap-3 ${
             isCollapsed ? "justify-center" : ""

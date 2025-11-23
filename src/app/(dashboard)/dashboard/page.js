@@ -8,9 +8,9 @@ import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { Tag } from "primereact/tag";
 import { Button } from "primereact/button";
-import DevTools from "@/component/DevTools";
+import DevTools from "@/component/shared/DevTools";
 import { FilterMatchMode } from "primereact/api";
-import TableSkeleton from "@/component/TableSkeleton";
+import TableSkeleton from "@/component/shared/TableSkeleton";
 
 export default function Page() {
   // 1. Init Hook
