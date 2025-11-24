@@ -66,6 +66,14 @@ export default function getMenuItems(router, defaultRoute) {
       },
     },
     {
+      id: "affiliateHome",
+      label: "Affiliate Home",
+      icon: "pi pi-shop",
+      command: () => {
+        router.push(`${defaultRoute}/affiliate_home`);
+      },
+    },
+    {
       id: "analytics",
       label: "Analytics",
       icon: "pi pi-chart-line",
