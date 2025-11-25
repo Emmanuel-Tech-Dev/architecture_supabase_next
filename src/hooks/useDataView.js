@@ -19,6 +19,9 @@ export const useDataView = (
   // Initialize state with passed data or empty array
   const [data, setData] = useState(initDataParams.initialData || []);
   const [loading, setLoading] = useState(false);
+  const [templateGrid, setTemplateGrid] = useState(
+    " grid-cols-2 md:grid-cols-3"
+  );
 
   const [dataParams, setDataParams] = useState({
     pagination: { rows: 10 },
@@ -78,7 +81,7 @@ export const useDataView = (
       itemsList || ((p) => <div key={p.id}>{JSON.stringify(p)}</div>);
 
     return (
-      <div className="grid grid-col-2 md:grid-cols-3 p-5 ">
+      <div className={`grid ${templateGrid} gap-5 p-3 mt-3`}>
         {items.map((product, index) => renderItem(product, index))}
       </div>
     );
@@ -92,7 +95,7 @@ export const useDataView = (
         optionLabel="label"
         placeholder="Sort By"
         onChange={onSortChange}
-        className="w-65"
+        className="md:w-65 w-full"
       />
     );
   };
@@ -100,9 +103,12 @@ export const useDataView = (
   // FIXED: Logic to merge custom header with Sort Dropdown
   const dataView = (prop = {}) => {
     const combinedHeader = (
-      <div className="flex sm:flex-row justify-between items-center gap-2">
-        <span className="text-xl font-bold">{prop.header || ""}</span>
-        {renderHeaderDropdown()}
+      <div className="md:flex md:justify-between md:items-center gap-2 w-full">
+        <h1 className="text-xl font-bold mb-3 md:mb-0 ">{prop.header || ""}</h1>
+        <div className="flex items-center gap-3">
+          {renderHeaderDropdown()}
+          {prop?.filterjsx}
+        </div>
       </div>
     );
 
@@ -133,5 +139,6 @@ export const useDataView = (
     onSortChange,
     dataParams,
     sortField,
+    setTemplateGrid,
   };
 };

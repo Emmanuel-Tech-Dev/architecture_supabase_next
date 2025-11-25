@@ -20,18 +20,18 @@ export default function AppSidebar({
 
   return (
     <div
-      className={`fixed left-0 top-0 h-full bg-slate-900 text-white transition-all duration-300 z-50 flex flex-col ${
+      className={`fixed left-0 top-0 h-full bg-indigo-700 text-white transition-all duration-300 z-50 flex flex-col ${
         isCollapsed ? "w-20" : "w-58"
       }`}
     >
       {/* HEADER — FIXED */}
-      <div className="flex items-center justify-between p-4 border-b border-slate-700 shrink-0">
+      <div className="flex items-center justify-between p-4 border-b border-indigo-600 shrink-0">
         {!isCollapsed && (
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
               <i className="pi pi-chart-bar text-white"></i>
             </div>
-            <span className="font-bold text-lg">OpenRef</span>
+            <span className="font-bold text-lg">OpenRefer</span>
           </div>
         )}
         <Button
@@ -49,7 +49,7 @@ export default function AppSidebar({
           .scrollbar-custom {
             scroll-behavior: smooth;
             scrollbar-width: thin;
-            scrollbar-color: rgba(59, 130, 246, 0.5) rgba(51, 65, 85, 0.3);
+            scrollbar-color: oklch(45.7% 0.24 277.023) rgba(51, 65, 85, 0.3);
           }
           .scrollbar-custom::-webkit-scrollbar {
             width: 6px;
@@ -74,7 +74,7 @@ export default function AppSidebar({
             className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg mb-1 transition-all ${
               currentPage === item.id
                 ? "bg-blue-600 text-white"
-                : "text-slate-300 hover:bg-slate-800 hover:text-white"
+                : "text-slate-300 hover:bg-indigo-800 hover:text-white"
             } ${isCollapsed ? "justify-center" : ""}`}
           >
             <i className={`${item.icon} text-lg`}></i>
@@ -84,7 +84,7 @@ export default function AppSidebar({
       </div>
 
       {/* FOOTER — FIXED */}
-      <div className="p-4 border-t border-slate-700 shrink-0">
+      <div className="p-4 border-t border-indigo-600 shrink-0">
         <div
           className={`flex items-center gap-3 ${
             isCollapsed ? "justify-center" : ""

@@ -20,7 +20,7 @@ export default function Error({ error, reset }) {
     <div className="min-h-screen p-4">
       <div className="  card bg-white p-2 rounded-lg shadow-sm border border-gray-200 mt-12">
         <EmptyState
-          message={error.message || "Failed to load marketplace data"}
+          message={"The Marketplace is Quiet... For now"}
           actionText="Something went wrong"
           onAction={handleReset}
           disabled={isResetting}

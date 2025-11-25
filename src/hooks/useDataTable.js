@@ -5,19 +5,20 @@ import { Column } from "primereact/column";
 import { FilterMatchMode, FilterOperator, FilterService } from "primereact/api"; // Import these
 import Model from "@/libs/config/model";
 import { utils } from "@/libs/utils";
+import { useDebounce } from "primereact/hooks";
 
-function useDebounce(value, delay) {
-  const [debounceValue, setDebounceValue] = useState(value);
+// function useDebounce(value, delay) {
+//   const [debounceValue, setDebounceValue] = useState(value);
 
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebounceValue(value);
-    }, delay);
-    return () => clearTimeout(handler);
-  }, [value, delay]);
+//   useEffect(() => {
+//     const handler = setTimeout(() => {
+//       setDebounceValue(value);
+//     }, delay);
+//     return () => clearTimeout(handler);
+//   }, [value, delay]);
 
-  return debounceValue;
-}
+//   return debounceValue;
+// }
 
 FilterService.register("custom_activity", (value, filters) => {
   const [from, to] = filters ?? [null, null];
@@ -43,10 +44,14 @@ export const useDataTable = (
   const [selectionMode, setSelectionMode] = useState("multiple");
 
   //GLOBAL FILTERS
-  const [globalFilterValue, setGlobalFilterValue] = useState("");
+  const [globalFilterValue, debouncedValue, setGlobalFilterValue] = useDebounce(
+    "",
+    500
+  );
 
   // Debounce the global filter value (wait 500ms)
-  const debouncedGlobalFilter = useDebounce(globalFilterValue, 500);
+
+  // const debouncedValue = useDebounce(globalFilterValue, 500);
 
   // Initialize lazyParams
   const [lazyParams, setLazyParams] = useState({
@@ -123,7 +128,7 @@ export const useDataTable = (
 
       // --- FILTER PARSING LOGIC ---
       const activeFilters = [];
-      const globalSearchString = debouncedGlobalFilter;
+      const globalSearchString = debouncedValue;
 
       if (lazyParams.filters) {
         Object.keys(lazyParams.filters).forEach((field) => {
@@ -197,7 +202,7 @@ export const useDataTable = (
     } finally {
       setLoading(false);
     }
-  }, [tableName, lazyParams, columns, debouncedGlobalFilter]);
+  }, [tableName, lazyParams, columns, debouncedValue]);
 
   // // Fetch on params change
   useEffect(() => {

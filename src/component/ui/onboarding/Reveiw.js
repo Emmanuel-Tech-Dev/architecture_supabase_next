@@ -17,13 +17,15 @@ const DetailRow = ({ label, value, icon, onEdit }) => (
         <p className="text-base font-medium text-gray-800">{value}</p>
       </div>
     </div>
-    <Button
-      label="Edit"
-      text
-      size="small"
-      onClick={onEdit}
-      className="!text-indigo-600 hover:!text-indigo-700"
-    />
+    {label != "Payments" && (
+      <Button
+        label="Edit"
+        text
+        size="small"
+        onClick={onEdit}
+        className="!text-indigo-600 hover:!text-indigo-700"
+      />
+    )}
   </div>
 );
 
@@ -180,23 +182,12 @@ const Review = () => {
                 />
               )}
 
-              {editingField === "paymentStatus" ? (
-                <EditableDetailRow
-                  label="Payments"
-                  value={formData.paymentStatus}
-                  field="paymentStatus"
-                  onChange={handleFieldChange}
-                  onSave={handleSave}
-                  onCancel={handleCancel}
-                />
-              ) : (
-                <DetailRow
-                  label="Payments"
-                  value={formData.paymentStatus}
-                  icon="pi-check-circle"
-                  onEdit={() => handleEdit("paymentStatus")}
-                />
-              )}
+              <DetailRow
+                label="Payments"
+                value={formData.paymentStatus}
+                icon="pi-check-circle"
+                onEdit={() => handleEdit("paymentStatus")}
+              />
             </div>
           </Card>
         </div>

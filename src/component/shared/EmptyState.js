@@ -2,6 +2,7 @@ import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 
 export default function EmptyState({
+  title = "No Data Available",
   message = "No records found matching your criteria.",
   actionText,
   onAction,
@@ -12,13 +13,14 @@ export default function EmptyState({
         className="pi pi-inbox text-gray-400 mb-4"
         style={{ fontSize: "2.5rem" }}
       ></i>
-      <h3 className="text-lg font-semibold text-gray-700">No Data Available</h3>
+
+      <h3 className="text-lg font-semibold text-gray-700">{title}</h3>
       <p className="text-sm text-gray-500 max-w-sm mb-4">{message}</p>
       {actionText && onAction && (
         <Button
           //   label={actionText}
           icon="pi pi-refresh"
-          severity="help"
+          severity="primary"
           outlined
           onClick={onAction}
           aria-label="Refresh"

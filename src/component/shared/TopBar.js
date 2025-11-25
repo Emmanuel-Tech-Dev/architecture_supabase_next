@@ -7,9 +7,7 @@ export default function Topbar({ isCollapsed }) {
         isCollapsed ? "left-20" : "left-58"
       }`}
     >
-      <h1 className="text-xl font-semibold text-gray-800">
-        OpenRef Admin Dashboard
-      </h1>
+      <h1 className="text-xl font-semibold text-gray-800">Dashboard</h1>
 
       <div className="flex items-center gap-3">
         <Button

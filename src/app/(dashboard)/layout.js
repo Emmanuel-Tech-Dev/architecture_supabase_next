@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import Loader from "@/component/loaders/Loader";
 import useWindowSize from "@/hooks/useWindowSize";
 import ScrollToTop from "@/component/shared/ScrollToTop";
+import { ConfirmDialog } from "primereact/confirmdialog";
 
 export default function AppLayout({ children }) {
   const [currentPage, setCurrentPage] = useState("dashboard");
@@ -37,7 +38,8 @@ export default function AppLayout({ children }) {
           isCollapsed ? "ml-20" : "ml-58"
         }`}
       >
-        <div className="px-6">{children}</div>
+        <ConfirmDialog className="!w-[30rem]" dismissableMask />
+        <div className="px-3 md:px-6">{children}</div>
       </main>
     </div>
   );
