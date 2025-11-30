@@ -19,6 +19,7 @@ import { Accordion, AccordionTab } from "primereact/accordion";
 import { Slider } from "primereact/slider";
 import { RadioButton } from "primereact/radiobutton";
 import { Checkbox } from "primereact/checkbox";
+import "primereact/resources/themes/lara-light-indigo/theme.css";
 
 const MarketPlace = ({ data }) => {
   const cards = useDataView(
@@ -97,7 +98,7 @@ const MarketPlace = ({ data }) => {
   useEffect(() => {
     if (data) {
       cards.setData(data);
-      cards.setTemplateGrid("md:grid-cols-4");
+      cards.setTemplateGrid("md:grid-cols-3");
     }
   }, [data]);
 

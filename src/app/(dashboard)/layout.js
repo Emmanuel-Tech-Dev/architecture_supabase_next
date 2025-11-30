@@ -7,6 +7,7 @@ import Loader from "@/component/loaders/Loader";
 import useWindowSize from "@/hooks/useWindowSize";
 import ScrollToTop from "@/component/shared/ScrollToTop";
 import { ConfirmDialog } from "primereact/confirmdialog";
+import Footer from "@/component/shared/Footer";
 
 export default function AppLayout({ children }) {
   const [currentPage, setCurrentPage] = useState("dashboard");
@@ -41,6 +42,8 @@ export default function AppLayout({ children }) {
         <ConfirmDialog className="!w-[30rem]" dismissableMask />
         <div className="px-3 md:px-6">{children}</div>
       </main>
+
+      <Footer isCollapsed={isCollapsed} />
     </div>
   );
 }

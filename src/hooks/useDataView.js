@@ -140,5 +140,6 @@ export const useDataView = (
     dataParams,
     sortField,
     setTemplateGrid,
+    setDataParams,
   };
 };

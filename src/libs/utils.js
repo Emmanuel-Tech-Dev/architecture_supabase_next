@@ -141,7 +141,7 @@ export const utils = {
 
   formatNumber: (value) => {
     value = Number(value);
-    console.log("Converted to number:", value); // Debugging statement
+    // console.log("Converted to number:", value); // Debugging statement
     if (isNaN(value)) return "0";
     if (value < 1000) return value.toString();
     const units = ["", "K", "M", "B", "T", "Q"];
@@ -150,12 +150,12 @@ export const utils = {
     while (value >= 1000 && unitIndex < units.length - 1) {
       value /= 1000;
       unitIndex++;
-      console.log("Value after division:", value, "Unit index:", unitIndex); // Debugging statement
+      // console.log("Value after division:", value, "Unit index:", unitIndex); // Debugging statement
     }
 
     const formattedValue =
       value.toFixed(1).replace(/\.0$/, "") + units[unitIndex];
-    console.log("Formatted value:", formattedValue); // Debugging statement
+    // console.log("Formatted value:", formattedValue); // Debugging statement
     return formattedValue;
   },
   // Purals
