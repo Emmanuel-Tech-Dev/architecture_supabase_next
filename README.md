@@ -34,3 +34,18 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+
+Check what i built 
+## 📸 Screenshots
+
+### Dashboard
+<img src="https://media.licdn.com/dms/image/v2/D4D22AQHcVX1u1AYciQ/feedshare-shrink_800/B4DZrZ_F3mKQAg-/0/1764593788757?e=1766016000&v=beta&t=cNOjzqyHPqqCExpmcDif7vq2194QO0cWcF5Eqf9BfeA" width="700"/>
+
+### Product List
+<img src="https://media.licdn.com/dms/image/v2/D4D22AQEZM-iwVC9HIw/feedshare-shrink_2048_1536/B4DZrZ_F3jKQAw-/0/1764593788837?e=1766016000&v=beta&t=fGGE7hZnd83ajIpTuMnxQy7xjsDXxqJ6XZK2wo5-j8g" width="700"/>
+
+### Detail History Data illustration with a brush View
+<img src="https://media.licdn.com/dms/image/v2/D4D22AQGOdxLakcnzIA/feedshare-shrink_2048_1536/B4DZrZ_F4FJMAw-/0/1764593791374?e=1766016000&v=beta&t=wtMWi6aXPbfPs-73NrvEUSNDVguvVbov7qa1RF2Fbx4" width="700"/>
+
+
